@@ -3,8 +3,9 @@ provider "aws" {
 }
 
 resource "aws_instance" "example" {
-  ami = "ami-067871d950411e643"
+  ami = "ami-0b828c1c5ac3f13ee"
   instance_type = "t2.micro"
+  vpc_security_group_ids = [aws_security_group.instance.id]
 
   user_data = <<-EOF
               #!/bin/bash
@@ -12,8 +13,9 @@ resource "aws_instance" "example" {
               nohup busybox httpd -f -p 8080 &
               EOF
   user_data_replace_on_change = true
+}
 
-resouce "aws_security_group" "instance" {
+resource "aws_security_group" "instance" {
   name = "terraform-example-instance"
 
   ingress {
@@ -22,11 +24,8 @@ resouce "aws_security_group" "instance" {
     protocol  = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
-}
 
   tags = {
     "Name" = "terraform-example"
   }
 }
-
-resource "aws_security
